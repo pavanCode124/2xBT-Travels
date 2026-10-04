@@ -44,7 +44,7 @@ export function SiteHeader() {
         borderBottom: `1px solid ${lifted ? "var(--rule)" : "transparent"}`,
       }}
     >
-      <div className="shell flex h-[72px] items-center justify-between gap-6">
+      <div className="shell flex h-20 items-center justify-between gap-6">
         <Link href="/" className="flex shrink-0 items-center gap-2.5" aria-label={`${site.name} home`}>
           <Image
             src="/images/logo-mark.png"
@@ -52,7 +52,7 @@ export function SiteHeader() {
             width={671}
             height={575}
             priority
-            className="brand-plate h-9 w-auto"
+            className="brand-plate h-14 w-auto sm:h-16"
           />
           <span className="sr-only">{site.legalName}</span>
         </Link>
@@ -115,7 +115,7 @@ export function SiteHeader() {
           style={{
             backgroundColor: "var(--bg)",
             borderTop: "1px solid var(--rule)",
-            height: "calc(100dvh - 72px)",
+            height: "calc(100dvh - 80px)",
           }}
         >
           <div className="shell flex h-full flex-col justify-between py-8">

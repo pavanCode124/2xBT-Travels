@@ -32,7 +32,7 @@ export function PackagesExplorer({ packages }: { packages: Pkg[] }) {
   return (
     <section className="shell pb-24">
       <div
-        className="sticky top-[72px] z-30 -mx-5 mb-10 flex flex-col gap-4 border-y px-5 py-4 md:-mx-8 md:flex-row md:items-center md:justify-between md:px-8"
+        className="sticky top-20 z-30 -mx-5 mb-10 flex flex-col gap-4 border-y px-5 py-4 md:-mx-8 md:flex-row md:items-center md:justify-between md:px-8"
         style={{
           backgroundColor: "color-mix(in oklab, var(--bg) 92%, transparent)",
           backdropFilter: "blur(10px)",

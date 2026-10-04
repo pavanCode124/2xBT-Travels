@@ -15,21 +15,25 @@ const team = [
   {
     name: "Gaurav Basutkar",
     role: "Founder and CEO",
+    photo: "/images/team/gaurav-basutkar.jpg",
     bio: "Leads the company with a strong passion for travel, innovation and customer first experiences, and oversees the sales team, partnerships and growth.",
   },
   {
     name: "Dharmesh Lokare",
     role: "Chief Financial Officer",
+    photo: "/images/team/dharmesh-lokare.jpg",
     bio: "Runs financial planning and controls alongside on ground operations, keeping safety standards, journey execution and coordination tight.",
   },
   {
     name: "Bhakti Basutkar",
     role: "Chief IT Officer",
+    photo: "/images/team/bhakti-basutkar.jpg",
     bio: "Drives the digital backbone of 2XBT, from booking systems to the online experience you are reading right now.",
   },
   {
     name: "Aditya Kamble",
     role: "Chief Operations Officer",
+    photo: "/images/team/aditya-kamble.jpg",
     bio: "Manages brand presence and storytelling across social platforms, connecting the travel community through content.",
   },
 ];
@@ -145,25 +149,31 @@ export default function AboutPage() {
           The people who answer when you call
         </h2>
 
-        <ul className="mt-12 grid gap-x-10 gap-y-12 sm:grid-cols-2">
+        <ul className="mt-12 grid gap-x-10 gap-y-14 sm:grid-cols-2">
           {team.map((person, i) => (
             <Reveal as="li" key={person.name} delay={i * 70}>
-              <div
-                className="grid h-14 w-14 place-items-center rounded-full font-display text-lg font-semibold"
-                style={{ backgroundColor: "var(--accent-soft)", color: "var(--accent)" }}
-                aria-hidden
-              >
-                {person.name
-                  .split(" ")
-                  .map((n) => n[0])
-                  .join("")}
+              <div className="flex items-start gap-6">
+                <div
+                  className="relative h-32 w-32 shrink-0 overflow-hidden rounded-full ring-4 ring-[var(--accent-soft)] sm:h-36 sm:w-36"
+                >
+                  <Image
+                    src={person.photo}
+                    alt={`${person.name}, ${person.role}`}
+                    width={300}
+                    height={300}
+                    sizes="144px"
+                    className="h-full w-full object-cover object-top"
+                  />
+                </div>
+                <div className="pt-1">
+                  <h3 className="font-display text-xl font-semibold">{person.name}</h3>
+                  <p className="mt-1 text-[0.9375rem] font-medium" style={{ color: "var(--accent)" }}>
+                    {person.role}
+                  </p>
+                </div>
               </div>
-              <h3 className="mt-5 font-display text-xl font-semibold">{person.name}</h3>
-              <p className="mt-0.5 text-[0.9375rem] font-medium" style={{ color: "var(--accent)" }}>
-                {person.role}
-              </p>
               <p
-                className="mt-3 max-w-[46ch] leading-relaxed"
+                className="mt-5 max-w-[46ch] leading-relaxed"
                 style={{ color: "var(--ink-soft)" }}
               >
                 {person.bio}

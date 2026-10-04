@@ -66,67 +66,65 @@ export default function HomePage() {
 
 function Hero() {
   return (
-    <section className="shell pt-5 pb-14 md:pt-7 md:pb-20">
-      <div className="relative overflow-hidden rounded-[26px] md:rounded-[34px]">
-        <Image
-          src="/images/group-maheshwar.webp"
-          alt="A 2XBT group sitting together on the temple steps at Maheshwar"
-          width={1280}
-          height={960}
-          priority
-          sizes="(max-width: 1280px) 100vw, 1232px"
-          className="h-[34rem] w-full object-cover object-[50%_36%] sm:h-[36rem] lg:h-[38rem] lg:object-[50%_45%]"
-        />
+    <section className="relative isolate overflow-hidden bg-[var(--color-navy-990)]">
+      <Image
+        src="/images/group-maheshwar.webp"
+        alt="A 2XBT group sitting together on the temple steps at Maheshwar"
+        width={1280}
+        height={960}
+        priority
+        sizes="100vw"
+        className="absolute inset-0 -z-10 h-full w-full object-cover object-[50%_36%] lg:object-[50%_42%]"
+      />
 
-        {/* Two scrims: the row of faces sits mid frame, so the copy drops to
-            the bottom on narrow screens and moves left on wide ones. */}
-        <div
-          className="absolute inset-0 lg:hidden"
-          style={{
-            background:
-              "linear-gradient(to top, rgb(1 26 46 / 0.94) 0%, rgb(1 26 46 / 0.8) 40%, rgb(1 26 46 / 0.58) 72%, rgb(1 26 46 / 0.5) 100%)",
-          }}
-        />
-        <div
-          className="absolute inset-0 hidden lg:block"
-          style={{
-            background:
-              "linear-gradient(100deg, rgb(1 26 46 / 0.92) 6%, rgb(1 26 46 / 0.68) 36%, rgb(1 26 46 / 0.06) 68%)",
-          }}
-        />
-        <div
-          className="absolute inset-0 hidden lg:block"
-          style={{
-            background:
-              "linear-gradient(to top, rgb(1 26 46 / 0.5) 0%, rgb(1 26 46 / 0) 42%)",
-          }}
-        />
+      {/* Two scrims: the row of faces sits mid frame, so the copy drops to
+          the bottom on narrow screens and moves left on wide ones. */}
+      <div
+        className="absolute inset-0 lg:hidden"
+        style={{
+          background:
+            "linear-gradient(to top, rgb(1 26 46 / 0.94) 0%, rgb(1 26 46 / 0.8) 40%, rgb(1 26 46 / 0.58) 72%, rgb(1 26 46 / 0.5) 100%)",
+        }}
+      />
+      <div
+        className="absolute inset-0 hidden lg:block"
+        style={{
+          background:
+            "linear-gradient(100deg, rgb(1 26 46 / 0.92) 6%, rgb(1 26 46 / 0.68) 36%, rgb(1 26 46 / 0.06) 68%)",
+        }}
+      />
+      <div
+        className="absolute inset-0 hidden lg:block"
+        style={{
+          background:
+            "linear-gradient(to top, rgb(1 26 46 / 0.5) 0%, rgb(1 26 46 / 0) 42%)",
+        }}
+      />
 
-        <div className="absolute inset-0 flex items-end lg:items-center">
-          <div className="w-full p-6 sm:p-10 lg:max-w-[40rem] lg:p-14">
-            <p className="text-[0.6875rem] font-semibold uppercase tracking-[0.2em] text-white/70">
-              You choose the place, we take care of the rest
-            </p>
-            <h1 className="mt-4 font-display text-[2.5rem] font-semibold uppercase leading-[0.95] tracking-tight text-white sm:text-6xl lg:text-[4.5rem]">
-              Travel.
-              <br />
-              Chill.
-              <br />
-              <span style={{ color: "var(--color-flame-400)" }}>Repeat.</span>
-            </h1>
-            <p className="mt-5 max-w-[44ch] text-[1.0625rem] leading-relaxed text-white/80 sm:mt-6 sm:text-lg">
-              Group tours and treks across India, planned and run end to end
-              from Mumbai. You pick the place, we handle everything else.
-            </p>
-            <div className="mt-8 flex flex-wrap gap-3">
-              <Link href="/packages" className="btn btn-primary">
-                Browse tours
-                <ArrowRight size={17} weight="bold" />
-              </Link>
-              <Link href="/contact" className="btn btn-onimage">
-                Plan my trip
-              </Link>
-            </div>
+      <div className="shell relative z-10 flex h-[34rem] items-end pb-12 sm:h-[38rem] lg:h-[calc(100svh-80px)] lg:min-h-[36rem] lg:max-h-[56rem] lg:items-center lg:pb-0">
+        <div className="w-full lg:max-w-[40rem]">
+          <p className="text-[0.6875rem] font-semibold uppercase tracking-[0.2em] text-white/70">
+            You choose the place, we take care of the rest
+          </p>
+          <h1 className="mt-4 font-display text-[2.5rem] font-semibold uppercase leading-[0.95] tracking-tight text-white sm:text-6xl lg:text-[4.5rem]">
+            Travel.
+            <br />
+            Chill.
+            <br />
+            <span style={{ color: "var(--color-flame-400)" }}>Repeat.</span>
+          </h1>
+          <p className="mt-5 max-w-[44ch] text-[1.0625rem] leading-relaxed text-white/80 sm:mt-6 sm:text-lg">
+            Group tours and treks across India, planned and run end to end
+            from Mumbai. You pick the place, we handle everything else.
+          </p>
+          <div className="mt-8 flex flex-wrap gap-3">
+            <Link href="/packages" className="btn btn-primary">
+              Browse tours
+              <ArrowRight size={17} weight="bold" />
+            </Link>
+            <Link href="/contact" className="btn btn-onimage">
+              Plan my trip
+            </Link>
           </div>
         </div>
       </div>
