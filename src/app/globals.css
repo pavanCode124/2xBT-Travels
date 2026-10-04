@@ -1,0 +1,319 @@
+@import "tailwindcss";
+
+/* ------------------------------------------------------------------
+   2XBT design tokens.
+   Accent is orange, taken from the logo. Navy is the ink, cyan lives
+   only inside the logo artwork so the UI keeps a single accent.
+------------------------------------------------------------------ */
+@theme {
+  --color-sand-50: #fbf8f5;
+  --color-sand-100: #f4efe9;
+  --color-sand-200: #e7dfd5;
+
+  --color-navy-50: #eef4f9;
+  --color-navy-100: #d6e3ef;
+  --color-navy-300: #7ea2c0;
+  --color-navy-500: #2b6089;
+  --color-navy-700: #0d4570;
+  --color-navy-900: #00335b;
+  --color-navy-950: #012440;
+  --color-navy-990: #011a2e;
+
+  --color-flame-400: #ff8a3d;
+  --color-flame-500: #f46811;
+  --color-flame-600: #d9540a;
+  --color-flame-700: #b14308;
+
+  --color-lagoon-500: #0b97cc;
+
+  --font-display: var(--font-outfit), ui-sans-serif, system-ui, sans-serif;
+  --font-sans: var(--font-geist), ui-sans-serif, system-ui, sans-serif;
+
+  --ease-out-strong: cubic-bezier(0.23, 1, 0.32, 1);
+  --ease-in-out-strong: cubic-bezier(0.77, 0, 0.175, 1);
+}
+
+:root {
+  color-scheme: light;
+  --bg: var(--color-sand-50);
+  --bg-raised: #ffffff;
+  --bg-sunken: var(--color-sand-100);
+  --ink: var(--color-navy-900);
+  --ink-soft: #3d5a74;
+  --ink-faint: #6b8299;
+  --rule: #e2dad0;
+  --rule-strong: #cfc3b5;
+  --accent: var(--color-flame-500);
+  --accent-ink: #ffffff;
+  --accent-soft: #fdeee3;
+  --shadow-tint: 0 60 91;
+}
+
+:root[data-theme="dark"],
+html.dark {
+  color-scheme: dark;
+  --bg: var(--color-navy-990);
+  --bg-raised: #06243e;
+  --bg-sunken: #010f1c;
+  --ink: #eaf2f8;
+  --ink-soft: #a9c3d6;
+  --ink-faint: #7d9bb2;
+  --rule: #0c3a5e;
+  --rule-strong: #14517f;
+  --accent: var(--color-flame-400);
+  --accent-ink: #2a1200;
+  --accent-soft: #2a1407;
+  --shadow-tint: 0 0 0;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    color-scheme: dark;
+    --bg: var(--color-navy-990);
+    --bg-raised: #06243e;
+    --bg-sunken: #010f1c;
+    --ink: #eaf2f8;
+    --ink-soft: #a9c3d6;
+    --ink-faint: #7d9bb2;
+    --rule: #0c3a5e;
+    --rule-strong: #14517f;
+    --accent: var(--color-flame-400);
+    --accent-ink: #2a1200;
+    --accent-soft: #2a1407;
+    --shadow-tint: 0 0 0;
+  }
+}
+
+@layer base {
+  * {
+    border-color: var(--rule);
+  }
+
+  html {
+    scroll-behavior: smooth;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    html {
+      scroll-behavior: auto;
+    }
+  }
+
+  body {
+    background-color: var(--bg);
+    color: var(--ink);
+    font-family: var(--font-sans);
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+  }
+
+  ::selection {
+    background-color: var(--accent);
+    color: var(--accent-ink);
+  }
+
+  :focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: 3px;
+    border-radius: 4px;
+  }
+}
+
+@layer components {
+  /* One radius system: cards 16px, controls pill, inputs 10px. */
+  .shell {
+    width: 100%;
+    max-width: 78rem;
+    margin-inline: auto;
+    padding-inline: 1.25rem;
+  }
+
+  @media (min-width: 768px) {
+    .shell {
+      padding-inline: 2rem;
+    }
+  }
+
+  .surface {
+    background-color: var(--bg-raised);
+    border: 1px solid var(--rule);
+    border-radius: 16px;
+  }
+
+  /* The logo carries navy type that disappears on the dark ground, so in
+     dark mode it sits on a light plate rather than being recoloured. */
+  .brand-plate {
+    border-radius: 10px;
+  }
+
+  :root[data-theme="dark"] .brand-plate,
+  html.dark .brand-plate {
+    background-color: #ffffff;
+    padding: 4px 7px;
+  }
+
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) .brand-plate {
+      background-color: #ffffff;
+      padding: 4px 7px;
+    }
+  }
+
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    white-space: nowrap;
+    border-radius: 999px;
+    font-weight: 600;
+    font-size: 0.9375rem;
+    line-height: 1;
+    padding: 0.875rem 1.5rem;
+    transition-property: background-color, color, border-color, transform, box-shadow;
+    transition-duration: 180ms;
+    transition-timing-function: var(--ease-out-strong);
+    will-change: transform;
+  }
+
+  .btn:active {
+    transform: translateY(1px);
+  }
+
+  .btn-primary {
+    background-color: var(--accent);
+    color: var(--accent-ink);
+    box-shadow: 0 1px 2px rgb(var(--shadow-tint) / 0.18);
+  }
+
+  .btn-ghost {
+    background-color: transparent;
+    color: var(--ink);
+    border: 1px solid var(--rule-strong);
+  }
+
+  .btn-onimage {
+    background-color: rgb(255 255 255 / 0.12);
+    color: #ffffff;
+    border: 1px solid rgb(255 255 255 / 0.5);
+    backdrop-filter: blur(8px);
+  }
+
+  @media (hover: hover) and (pointer: fine) {
+    .btn-primary:hover {
+      background-color: var(--color-flame-600);
+    }
+    .btn-ghost:hover {
+      background-color: var(--bg-sunken);
+      border-color: var(--ink-faint);
+    }
+    .btn-onimage:hover {
+      background-color: rgb(255 255 255 / 0.22);
+    }
+  }
+
+  .field {
+    width: 100%;
+    border-radius: 10px;
+    border: 1px solid var(--rule-strong);
+    background-color: var(--bg-raised);
+    color: var(--ink);
+    padding: 0.75rem 0.9375rem;
+    font-size: 0.9375rem;
+    transition: border-color 160ms var(--ease-out-strong);
+  }
+
+  .field::placeholder {
+    color: var(--ink-faint);
+  }
+
+  .field:focus {
+    border-color: var(--accent);
+    outline: none;
+    box-shadow: 0 0 0 3px color-mix(in oklab, var(--accent) 22%, transparent);
+  }
+
+  .prose-legal p,
+  .prose-legal li {
+    color: var(--ink-soft);
+    line-height: 1.8;
+  }
+
+  .prose-legal h2 {
+    font-family: var(--font-display);
+    color: var(--ink);
+    font-size: 1.25rem;
+    font-weight: 600;
+    margin-top: 2.5rem;
+    margin-bottom: 0.75rem;
+  }
+
+  .prose-legal p + p {
+    margin-top: 1rem;
+  }
+
+  .prose-legal ul {
+    margin-top: 0.75rem;
+    display: grid;
+    gap: 0.5rem;
+    padding-left: 1.125rem;
+    list-style: disc;
+  }
+}
+
+@utility text-balance-head {
+  text-wrap: balance;
+}
+
+/* Marquee for the destination strip. Runs off the main thread. */
+@keyframes marquee-x {
+  from {
+    transform: translate3d(0, 0, 0);
+  }
+  to {
+    transform: translate3d(-50%, 0, 0);
+  }
+}
+
+.marquee-track {
+  animation: marquee-x 42s linear infinite;
+  will-change: transform;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .marquee-track {
+    animation: none;
+  }
+}
+
+/* Scroll reveal. Progressive enhancement: visible by default, the
+   observer adds the hidden state only when JS and motion are allowed. */
+.reveal-ready {
+  opacity: 0;
+  transform: translate3d(0, 14px, 0);
+}
+
+.reveal-in {
+  opacity: 1;
+  transform: translate3d(0, 0, 0);
+  transition:
+    opacity 520ms var(--ease-out-strong),
+    transform 520ms var(--ease-out-strong);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .reveal-ready {
+    opacity: 1;
+    transform: none;
+  }
+  .reveal-in {
+    transition: opacity 200ms linear;
+  }
+}
+
+.no-scrollbar {
+  scrollbar-width: none;
+}
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
