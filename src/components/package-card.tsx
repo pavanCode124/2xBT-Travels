@@ -1,92 +1,118 @@
 import Link from "next/link";
 import Image from "next/image";
-import { ArrowUpRight, MoonStars, CalendarBlank } from "@phosphor-icons/react/dist/ssr";
-import { inr, type Pkg } from "@/data/packages";
+import { CalendarBlank, MapPin, ArrowUpRight } from "@phosphor-icons/react/dist/ssr";
+import { durationOf, inr, type Package } from "@/data/packages";
+
+const CATEGORY_LABEL: Record<string, string> = {
+  yatra: "Yatra",
+  himalaya: "Himalaya",
+  kerala: "South",
+  islands: "Islands",
+  trek: "Trek",
+};
 
 export function PackageCard({
   pkg,
   priority = false,
-  size = "md",
+  sizes = "(min-width: 1280px) 25rem, (min-width: 768px) 45vw, 92vw",
 }: {
-  pkg: Pkg;
+  pkg: Package;
   priority?: boolean;
-  size?: "md" | "lg";
+  sizes?: string;
 }) {
-  return (
-    <article className="group h-full">
-      <Link
-        href={`/packages/${pkg.slug}`}
-        className="flex h-full flex-col overflow-hidden rounded-2xl border transition-[border-color,box-shadow,transform] duration-200 ease-[var(--ease-out-strong)] hover:-translate-y-0.5 hover:shadow-[0_12px_32px_-12px_rgb(var(--shadow-tint)/0.26)]"
-        style={{ backgroundColor: "var(--bg-raised)", borderColor: "var(--rule)" }}
-      >
-        <div
-          className={`relative overflow-hidden ${size === "lg" ? "aspect-[16/11]" : "aspect-[4/3]"}`}
-          style={{ backgroundColor: "var(--bg-sunken)" }}
-        >
-          <Image
-            src={pkg.image}
-            alt={pkg.imageAlt}
-            fill
-            priority={priority}
-            sizes={size === "lg" ? "(max-width: 768px) 100vw, 640px" : "(max-width: 768px) 100vw, 400px"}
-            className="object-cover transition-transform duration-500 ease-[var(--ease-out-strong)] motion-safe:group-hover:scale-[1.04]"
-          />
-          <span
-            className="absolute left-3 top-3 rounded-full px-3 py-1 text-[0.6875rem] font-semibold tracking-wide text-white backdrop-blur-sm"
-            style={{ backgroundColor: "rgb(1 36 64 / 0.72)" }}
-          >
-            {pkg.theme}
-          </span>
-        </div>
+  const saving =
+    pkg.originalPrice && pkg.originalPrice > pkg.price
+      ? Math.round(((pkg.originalPrice - pkg.price) / pkg.originalPrice) * 100)
+      : 0;
 
-        <div className="flex flex-1 flex-col p-5">
-          <h3
-            className={`font-display font-semibold leading-snug ${size === "lg" ? "text-2xl" : "text-lg"}`}
+  return (
+    <article className="surface surface-lift group flex h-full flex-col overflow-hidden">
+      <Link href={`/packages/${pkg.slug}`} className="relative block aspect-[16/11] overflow-hidden">
+        <Image
+          src={pkg.image}
+          alt={pkg.name}
+          fill
+          priority={priority}
+          sizes={sizes}
+          className="object-cover transition-transform duration-[900ms] ease-[var(--ease-out-strong)] group-hover:scale-[1.08]"
+        />
+        <span
+          className="absolute inset-0"
+          style={{
+            backgroundImage:
+              "linear-gradient(to top, rgb(7 31 56 / 0.78) 0%, rgb(7 31 56 / 0.1) 42%, transparent 70%)",
+          }}
+        />
+
+        <span className="absolute left-3.5 top-3.5 flex gap-1.5">
+          <span
+            className="badge"
+            style={{ backgroundColor: "rgb(255 255 255 / 0.92)", color: "var(--color-navy-800)" }}
+          >
+            {CATEGORY_LABEL[pkg.category]}
+          </span>
+          {saving >= 15 ? (
+            <span className="badge" style={{ backgroundColor: "var(--accent)", color: "#fff" }}>
+              Save {saving}%
+            </span>
+          ) : null}
+        </span>
+
+        <span className="absolute inset-x-3.5 bottom-3.5 flex items-end justify-between gap-3">
+          <span className="flex items-center gap-1.5 text-[0.8125rem] font-medium text-white/90">
+            <CalendarBlank size={14} weight="fill" />
+            {durationOf(pkg)}
+          </span>
+          <span className="grid h-9 w-9 translate-y-2 place-items-center rounded-full bg-white text-[var(--color-navy-800)] opacity-0 transition-all duration-300 group-hover:translate-y-0 group-hover:opacity-100">
+            <ArrowUpRight size={17} weight="bold" />
+          </span>
+        </span>
+      </Link>
+
+      <div className="flex flex-1 flex-col p-5">
+        <h3 className="font-display text-[1.0625rem] font-semibold leading-snug">
+          <Link
+            href={`/packages/${pkg.slug}`}
+            className="transition-colors duration-200 hover:text-[var(--accent)]"
           >
             {pkg.name}
-          </h3>
-          <p
-            className="mt-2 flex-1 text-[0.9375rem] leading-relaxed"
-            style={{ color: "var(--ink-soft)" }}
-          >
-            {size === "lg" ? pkg.blurb : pkg.headline}
-          </p>
+          </Link>
+        </h3>
 
-          <div
-            className="mt-4 flex flex-wrap items-center gap-x-4 gap-y-1.5 text-[0.8125rem]"
+        {pkg.travellers ? (
+          <p
+            className="mt-2 flex items-start gap-1.5 text-[0.8125rem] leading-snug"
             style={{ color: "var(--ink-faint)" }}
           >
-            <span className="flex items-center gap-1.5">
-              <MoonStars size={15} />
-              {pkg.days} days, {pkg.nights} nights
-            </span>
-            {pkg.startDate ? (
-              <span className="flex items-center gap-1.5">
-                <CalendarBlank size={15} />
-                {pkg.startDate}
-              </span>
-            ) : null}
-          </div>
+            <MapPin size={14} weight="fill" className="mt-0.5 shrink-0" />
+            {pkg.travellers}
+          </p>
+        ) : null}
 
-          <div
-            className="mt-5 flex items-end justify-between border-t pt-4"
-            style={{ borderColor: "var(--rule)" }}
-          >
-            <div>
-              <div className="text-[0.75rem]" style={{ color: "var(--ink-faint)" }}>
-                Triple sharing, per person
-              </div>
-              <div className="font-display text-xl font-semibold">{inr(pkg.price)}</div>
-            </div>
-            <span
-              className="grid h-9 w-9 place-items-center rounded-full transition-[background-color,color] duration-200"
-              style={{ backgroundColor: "var(--accent-soft)", color: "var(--accent)" }}
-            >
-              <ArrowUpRight size={17} weight="bold" />
+        <div
+          className="mt-auto flex items-end justify-between gap-3 border-t pt-4"
+          style={{ borderColor: "var(--rule)" }}
+        >
+          <p>
+            <span className="block text-[0.6875rem] uppercase tracking-wider" style={{ color: "var(--ink-faint)" }}>
+              Starts from
             </span>
-          </div>
+            <span className="flex items-baseline gap-2">
+              <span className="font-display text-[1.375rem] font-bold" style={{ color: "var(--accent)" }}>
+                {inr(pkg.price)}
+              </span>
+              {pkg.originalPrice && pkg.originalPrice > pkg.price ? (
+                <span className="text-[0.8125rem] line-through" style={{ color: "var(--ink-faint)" }}>
+                  {inr(pkg.originalPrice)}
+                </span>
+              ) : null}
+            </span>
+          </p>
+          <Link href={`/packages/${pkg.slug}`} className="btn btn-ghost btn-sm">
+            Details
+          </Link>
         </div>
-      </Link>
+      </div>
     </article>
   );
 }

@@ -2,381 +2,468 @@ import Link from "next/link";
 import Image from "next/image";
 import {
   ArrowRight,
-  UsersThree,
-  Bus,
-  ForkKnife,
-  Ticket,
-  Bed,
+  ArrowUpRight,
   ShieldCheck,
+  Receipt,
+  UsersThree,
+  Path,
+  Headset,
+  CurrencyInr,
   ChatCircleDots,
-  CheckCircle,
-  Confetti,
+  CalendarCheck,
+  Backpack,
 } from "@phosphor-icons/react/dist/ssr";
 import { Reveal } from "@/components/reveal";
-import { DeparturesRail } from "@/components/departures-rail";
-import { packages, inr } from "@/data/packages";
-import { site } from "@/data/site";
+import { HomeHero } from "@/components/home-hero";
+import { DestinationMarquee } from "@/components/destination-marquee";
+import { SectionHeading } from "@/components/section-heading";
+import { PackageCard } from "@/components/package-card";
+import { StatBand } from "@/components/stat-band";
+import { TestimonialWall } from "@/components/testimonial-wall";
+import { WaveDivider } from "@/components/wave";
+import {
+  FlightPath,
+  SketchBalloon,
+  SketchCamera,
+  SketchCompass,
+  SketchPalm,
+  SketchRoute,
+  SketchShikara,
+  SketchSuitcase,
+  SketchTemple,
+} from "@/components/sketch-art";
+import { categories, packages, inr } from "@/data/packages";
 
-// Rail order. Every card is the same width now, so this is purely about which
-// trip leads the row, not about which source photo is big enough to survive it.
-const railOrder = ["do-dham-yatra", "kerala", "kedarnath-tungnath", "chardham-yatra"];
-const featured = packages
-  .filter((p) => p.featured)
-  .sort((a, b) => railOrder.indexOf(a.slug) - railOrder.indexOf(b.slug));
-const cheapest = Math.min(...packages.map((p) => p.price));
+const CATEGORY_ART: Record<string, string> = {
+  yatra: "/images/tours/kedarnath-yatra-ex-haridwar.webp",
+  himalaya: "/images/tours/ladakh-kashmir-explorer-9d8n.webp",
+  kerala: "/images/tours/munnar-thekkady-allepy-5d4n.webp",
+  islands: "/images/tours/andaman-islands-6-day-tour.webp",
+  trek: "/images/tours/raigad-fort.webp",
+};
 
-const destinations = [
-  "Kedarnath",
-  "Badrinath",
-  "Gangotri",
-  "Yamunotri",
-  "Tungnath",
-  "Chopta",
-  "Rishikesh",
-  "Haridwar",
-  "Munnar",
-  "Alleppey",
-  "Varkala",
-  "Kovalam",
-  "Thekkady",
-  "Puri",
-  "Konark",
-  "Bhubaneswar",
-  "Ujjain",
-  "Omkareshwar",
-  "Maheshwar",
+const PROMISES = [
+  {
+    icon: Receipt,
+    title: "Costed up front",
+    body: "Every package lists what the price covers and, just as plainly, what it does not. No surprises at the counter.",
+  },
+  {
+    icon: Path,
+    title: "Written day by day",
+    body: "The itinerary is set before bookings open — the stay, the drive, the darshan and the trek day, all named.",
+  },
+  {
+    icon: UsersThree,
+    title: "A captain on every trip",
+    body: "A 2XBT tour captain travels with the group, handling check-ins, permits and the thousand small things.",
+  },
+  {
+    icon: ShieldCheck,
+    title: "Safety first, always",
+    body: "Backup vehicles on rides, first-aid and oxygen at altitude, and a women's-safety policy we actually enforce.",
+  },
+  {
+    icon: CurrencyInr,
+    title: "Pay in instalments",
+    body: "Hold your seat with a booking amount and clear the balance in stages before departure.",
+  },
+  {
+    icon: Headset,
+    title: "24×7 on-tour support",
+    body: "Ground support and emergency contacts stay reachable for the whole trip, not just office hours.",
+  },
+];
+
+const STEPS = [
+  {
+    icon: ChatCircleDots,
+    title: "Tell us the plan",
+    body: "Dates, group size, budget and the places on your list. A WhatsApp message is enough to start.",
+  },
+  {
+    icon: CalendarCheck,
+    title: "Get a costed itinerary",
+    body: "We send a day-by-day plan with the sharing basis, inclusions and the exact amount — usually the same day.",
+  },
+  {
+    icon: Backpack,
+    title: "Pack and go",
+    body: "Pay the booking amount, get your joining instructions, and meet your captain at the departure point.",
+  },
+];
+
+const SPOTLIGHT = [
+  { src: "/images/places/pangong-lake.webp", name: "Pangong Tso", region: "Ladakh", span: "lg:col-span-2 lg:row-span-2" },
+  { src: "/images/places/gulmarg.webp", name: "Gulmarg", region: "Kashmir", span: "" },
+  { src: "/images/places/kovalam.webp", name: "Kovalam", region: "Kerala", span: "" },
+  { src: "/images/places/havelock.webp", name: "Havelock", region: "Andaman", span: "" },
+  { src: "/images/places/kedarnath.webp", name: "Kedarnath", region: "Uttarakhand", span: "" },
+  { src: "/images/places/pokhara.webp", name: "Pokhara", region: "Nepal", span: "lg:col-span-2" },
 ];
 
 export default function HomePage() {
+  // Best-value picks: the biggest markdowns, one per region so the row is
+  // not six versions of the same trip.
+  const seen = new Set<string>();
+  const featured = packages
+    .slice()
+    .sort((a, b) => {
+      const da = a.originalPrice ? (a.originalPrice - a.price) / a.originalPrice : 0;
+      const db = b.originalPrice ? (b.originalPrice - b.price) / b.originalPrice : 0;
+      return db - da;
+    })
+    .filter((p) => {
+      const key = `${p.category}-${p.image}`;
+      if (seen.has(key)) return false;
+      seen.add(key);
+      return true;
+    })
+    .slice(0, 6);
+
+  const cheapest = Math.min(...packages.map((p) => p.price));
+
   return (
     <>
-      <Hero />
-      <FactsBand />
-      <DeparturesRail items={featured} total={packages.length} />
+      <HomeHero />
       <DestinationMarquee />
-      <WhatsIncluded />
-      <HowItWorks />
-      <EventsPartner />
-      <ClosingCta />
-    </>
-  );
-}
 
-/* ---------------------------------------------------------------- Hero */
-
-function Hero() {
-  return (
-    <section className="relative isolate overflow-hidden bg-[var(--color-navy-990)]">
-      <Image
-        src="/images/group-maheshwar.webp"
-        alt="A 2XBT group sitting together on the temple steps at Maheshwar"
-        width={1280}
-        height={960}
-        priority
-        sizes="100vw"
-        className="absolute inset-0 -z-10 h-full w-full object-cover object-[50%_36%] lg:object-[50%_42%]"
-      />
-
-      {/* Two scrims: the row of faces sits mid frame, so the copy drops to
-          the bottom on narrow screens and moves left on wide ones. */}
-      <div
-        className="absolute inset-0 lg:hidden"
-        style={{
-          background:
-            "linear-gradient(to top, rgb(1 26 46 / 0.94) 0%, rgb(1 26 46 / 0.8) 40%, rgb(1 26 46 / 0.58) 72%, rgb(1 26 46 / 0.5) 100%)",
-        }}
-      />
-      <div
-        className="absolute inset-0 hidden lg:block"
-        style={{
-          background:
-            "linear-gradient(100deg, rgb(1 26 46 / 0.92) 6%, rgb(1 26 46 / 0.68) 36%, rgb(1 26 46 / 0.06) 68%)",
-        }}
-      />
-      <div
-        className="absolute inset-0 hidden lg:block"
-        style={{
-          background:
-            "linear-gradient(to top, rgb(1 26 46 / 0.5) 0%, rgb(1 26 46 / 0) 42%)",
-        }}
-      />
-
-      <div className="shell relative z-10 flex h-[34rem] items-end pb-12 sm:h-[38rem] lg:h-[calc(100svh-80px)] lg:min-h-[36rem] lg:max-h-[56rem] lg:items-center lg:pb-0">
-        <div className="w-full lg:max-w-[40rem]">
-          <p className="text-[0.6875rem] font-semibold uppercase tracking-[0.2em] text-white/70">
-            You choose the place, we take care of the rest
-          </p>
-          <h1 className="mt-4 font-display text-[2.5rem] font-semibold uppercase leading-[0.95] tracking-tight text-white sm:text-6xl lg:text-[4.5rem]">
-            Travel.
-            <br />
-            Chill.
-            <br />
-            <span style={{ color: "var(--color-flame-400)" }}>Repeat.</span>
-          </h1>
-          <p className="mt-5 max-w-[44ch] text-[1.0625rem] leading-relaxed text-white/80 sm:mt-6 sm:text-lg">
-            Group tours and treks across India, planned and run end to end
-            from Mumbai. You pick the place, we handle everything else.
-          </p>
-          <div className="mt-8 flex flex-wrap gap-3">
-            <Link href="/packages" className="btn btn-primary">
-              Browse tours
-              <ArrowRight size={17} weight="bold" />
-            </Link>
-            <Link href="/contact" className="btn btn-onimage">
-              Plan my trip
-            </Link>
-          </div>
+      {/* ---- Regions ------------------------------------------------ */}
+      <section className="paper-grain relative overflow-hidden py-20 md:py-28">
+        {/* A compass turning behind the heading and a suitcase parked in
+            the far corner — the margin doodles of a trip notebook. */}
+        <div
+          aria-hidden
+          className="pointer-events-none absolute inset-0 select-none"
+          style={{ color: "var(--cool)" }}
+        >
+          <SketchCompass className="sketch-layer -top-6 right-[4%] hidden h-[150px] w-[150px] opacity-[0.16] lg:block" />
+          <SketchSuitcase
+            className="sketch-layer bottom-10 left-[2%] hidden h-[110px] w-[138px] opacity-[0.14] xl:block"
+            style={{ transform: "rotate(-8deg)" }}
+          />
         </div>
-      </div>
-    </section>
-  );
-}
 
-/* ---------------------------------------------------------- Facts band */
+        <div className="shell relative">
+        <SectionHeading
+          eyebrow="Where we go"
+          title="Five ways to leave"
+          accent="the city"
+          blurb="Pick the kind of trip first — the mountains, the temples, the backwaters, the islands or a weekend in the Sahyadris. The packages follow."
+        />
 
-function FactsBand() {
-  const facts = [
-    { value: `${packages.length} routes`, label: "Curated and repeatable" },
-    { value: "4 regions", label: "Himalayas to the coast" },
-    { value: `From ${inr(cheapest)}`, label: "Per person, triple sharing" },
-    { value: "Every trip", label: "Has a 2XBT group leader" },
-  ];
+        <div className="mt-14 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
+          {categories.map((c, i) => {
+            const list = packages.filter((p) => p.category === c.id);
+            const from = Math.min(...list.map((p) => p.price));
+            return (
+              <Reveal key={c.id} delay={i * 80} as="article" className="h-full">
+                <Link
+                  href={`/packages?category=${c.id}`}
+                  className="group relative block h-full min-h-[18rem] overflow-hidden rounded-[22px]"
+                >
+                  <Image
+                    src={CATEGORY_ART[c.id]}
+                    alt=""
+                    fill
+                    sizes="(min-width: 1024px) 26rem, (min-width: 640px) 46vw, 92vw"
+                    className="object-cover transition-transform duration-[900ms] ease-[var(--ease-out-strong)] group-hover:scale-110"
+                  />
+                  <span
+                    className="absolute inset-0 transition-opacity duration-500 group-hover:opacity-90"
+                    style={{
+                      backgroundImage:
+                        "linear-gradient(to top, rgb(5 22 40 / 0.92) 8%, rgb(5 22 40 / 0.45) 48%, rgb(5 22 40 / 0.12) 100%)",
+                    }}
+                  />
+                  <span className="relative flex h-full min-h-[18rem] flex-col justify-end p-6">
+                    <span
+                      className="badge mb-3 w-fit"
+                      style={{ backgroundColor: "rgb(255 255 255 / 0.18)", color: "#fff" }}
+                    >
+                      {list.length} packages
+                    </span>
+                    <span className="font-display text-[1.5rem] font-bold text-white">{c.label}</span>
+                    <span className="mt-2 max-w-[34ch] text-[0.875rem] leading-snug text-white/75">
+                      {c.blurb}
+                    </span>
+                    <span className="mt-5 flex items-center justify-between border-t border-white/20 pt-4 text-[0.875rem] text-white">
+                      <span>
+                        From{" "}
+                        <strong className="font-display" style={{ color: "var(--color-flame-300)" }}>
+                          {inr(from)}
+                        </strong>
+                      </span>
+                      <span className="flex items-center gap-1.5 font-medium">
+                        Browse
+                        <ArrowRight
+                          size={15}
+                          weight="bold"
+                          className="transition-transform duration-300 group-hover:translate-x-1"
+                        />
+                      </span>
+                    </span>
+                  </span>
+                </Link>
+              </Reveal>
+            );
+          })}
 
-  return (
-    <section
-      className="border-y"
-      style={{ backgroundColor: "var(--bg-sunken)", borderColor: "var(--rule)" }}
-    >
-      <div className="shell grid grid-cols-2 gap-x-6 gap-y-8 py-10 md:grid-cols-4 md:py-12">
-        {facts.map((f, i) => (
-          <Reveal key={f.value} delay={i * 60}>
-            <div className="font-display text-xl font-semibold sm:text-2xl">{f.value}</div>
-            <div className="mt-1.5 text-[0.875rem]" style={{ color: "var(--ink-faint)" }}>
-              {f.label}
+          <Reveal delay={400} as="article" className="h-full">
+            <div
+              className="aurora flex h-full min-h-[18rem] flex-col justify-between rounded-[22px] border p-7"
+              style={{ borderColor: "var(--rule-strong)", backgroundColor: "var(--bg-raised)" }}
+            >
+              <div>
+                <p className="eyebrow" style={{ color: "var(--accent)" }}>
+                  Can&rsquo;t decide?
+                </p>
+                <p className="display mt-4 text-[1.6rem]">
+                  Tell us the dates. We&rsquo;ll build it{" "}
+                  <span className="script text-[1.2em]" style={{ color: "var(--accent)" }}>
+                    around you.
+                  </span>
+                </p>
+                <p className="mt-4 text-[0.9375rem] leading-relaxed" style={{ color: "var(--ink-soft)" }}>
+                  Private groups, corporate offsites, family yatras and college trips —
+                  from {inr(cheapest)} per head.
+                </p>
+              </div>
+              <Link href="/contact" className="btn btn-primary mt-6 w-fit">
+                Start planning
+                <ArrowRight size={16} weight="bold" />
+              </Link>
             </div>
           </Reveal>
-        ))}
-      </div>
-    </section>
-  );
-}
+        </div>
+        </div>
+      </section>
 
-/* -------------------------------------------------- Destination marquee */
+      {/* ---- Featured ----------------------------------------------- */}
+      <section
+        className="border-y py-20 md:py-28"
+        style={{ backgroundColor: "var(--bg-sunken)", borderColor: "var(--rule)" }}
+      >
+        <div className="shell">
+          <SectionHeading
+            align="left"
+            eyebrow="Best value right now"
+            title="Trips worth"
+            accent="booking early"
+            blurb="The biggest savings across the catalogue this season, one pick per region."
+            action={
+              <Link href="/packages" className="btn btn-ghost">
+                All {packages.length} packages
+                <ArrowRight size={16} weight="bold" />
+              </Link>
+            }
+          />
 
-function DestinationMarquee() {
-  const row = [...destinations, ...destinations];
-
-  return (
-    <section
-      aria-label="Destinations we cover"
-      className="overflow-hidden border-y py-6"
-      style={{ backgroundColor: "var(--bg-sunken)", borderColor: "var(--rule)" }}
-    >
-      <div className="marquee-track flex w-max gap-10">
-        {row.map((d, i) => (
-          <span
-            key={`${d}-${i}`}
-            aria-hidden={i >= destinations.length}
-            className="font-display text-xl font-medium whitespace-nowrap sm:text-2xl"
-            style={{ color: i % 3 === 1 ? "var(--accent)" : "var(--ink-faint)" }}
-          >
-            {d}
-          </span>
-        ))}
-      </div>
-    </section>
-  );
-}
-
-/* ------------------------------------------------------ What's included */
-
-const inclusions = [
-  { icon: Bed, title: "Hotels, booked and paid", body: "Every night of the itinerary, in a named sharing basis." },
-  { icon: ForkKnife, title: "Breakfast and dinner daily", body: "Plus all meals on board for the Kerala houseboat night." },
-  { icon: Bus, title: "Private bus throughout", body: "All sightseeing and transfers, never a shared tourist coach." },
-  { icon: Ticket, title: "Yatra passes sorted", body: "Kedarnath and Char Dham registrations handled before you arrive." },
-  { icon: UsersThree, title: "A 2XBT group leader", body: "On the ground with you from the first morning to the drop." },
-  { icon: ShieldCheck, title: "Written terms up front", body: "Inclusions, exclusions and the cancellation policy on every page." },
-];
-
-function WhatsIncluded() {
-  return (
-    <section className="shell py-20 md:py-28">
-      <div className="grid gap-12 lg:grid-cols-[0.9fr_1.1fr] lg:gap-16">
-        <Reveal>
-          <h2 className="max-w-[16ch] font-display text-3xl font-semibold leading-tight tracking-tight sm:text-4xl">
-            What the price actually covers
-          </h2>
-          <p
-            className="mt-5 max-w-[48ch] text-lg leading-relaxed"
-            style={{ color: "var(--ink-soft)" }}
-          >
-            The same six things ship with every 2XBT departure. Anything outside
-            this list is written out as an exclusion on the tour page, so the
-            number you see is the number you plan around.
-          </p>
-          <Link href="/packages" className="btn btn-primary mt-8">
-            Compare all tours
-            <ArrowRight size={17} weight="bold" />
-          </Link>
-        </Reveal>
-
-        <ul className="grid gap-x-8 gap-y-7 sm:grid-cols-2">
-          {inclusions.map((item, i) => {
-            const Icon = item.icon;
-            return (
-              <Reveal as="li" key={item.title} delay={i * 50}>
-                <Icon size={24} style={{ color: "var(--accent)" }} />
-                <h3 className="mt-3 font-display text-base font-semibold">{item.title}</h3>
-                <p
-                  className="mt-1.5 text-[0.9375rem] leading-relaxed"
-                  style={{ color: "var(--ink-soft)" }}
-                >
-                  {item.body}
-                </p>
+          <div className="mt-14 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+            {featured.map((p, i) => (
+              <Reveal key={p.slug} delay={(i % 3) * 90} className="h-full">
+                <PackageCard pkg={p} priority={i < 3} />
               </Reveal>
-            );
-          })}
-        </ul>
-      </div>
-    </section>
-  );
-}
+            ))}
+          </div>
+        </div>
+      </section>
 
-/* ---------------------------------------------------------- How it works */
+      {/* ---- Promises + stats --------------------------------------- */}
+      <section className="relative overflow-hidden" style={{ backgroundColor: "var(--color-navy-900)" }}>
+        <div className="grid-veil absolute inset-0" />
 
-const steps = [
-  {
-    icon: ChatCircleDots,
-    title: "Tell us the dates",
-    body: "Message us on WhatsApp or send the enquiry form. We reply with availability and what the trip looks like for your group size.",
-  },
-  {
-    icon: CheckCircle,
-    title: "Confirm with an advance",
-    body: "Your seat is held once the advance reaches us. You get the full itinerary, the hotel list and the cancellation terms in writing.",
-  },
-  {
-    icon: Confetti,
-    title: "Turn up and travel",
-    body: "A 2XBT coordinator meets the group at the start point and stays through to the final drop. Everything on the inclusions list is already paid.",
-  },
-];
+        {/* Chalk on the navy: a shikhara, a balloon drifting up the right
+            edge, and a route arc crossing above the heading. */}
+        <div aria-hidden className="pointer-events-none absolute inset-0 select-none text-white">
+          <SketchTemple className="sketch-layer -left-4 bottom-0 hidden h-[260px] w-[234px] opacity-[0.07] lg:block" />
+          <SketchBalloon className="bob sketch-layer right-[5%] top-[12%] hidden h-[190px] w-[127px] opacity-[0.09] md:block" />
+          <FlightPath
+            className="sketch-layer right-[8%] top-0 hidden h-[150px] w-[46%] opacity-[0.14] xl:block"
+            duration={23}
+            dots={false}
+          />
+        </div>
+        <div className="shell relative py-20 md:py-28">
+          <SectionHeading
+            onDeep
+            eyebrow="Why 2XBT"
+            title="The boring parts,"
+            accent="handled"
+            blurb="Six things we commit to on every departure, whether it's a weekend fort trek or fifteen days in Nepal."
+          />
 
-function HowItWorks() {
-  return (
-    <section
-      className="border-y py-20 md:py-28"
-      style={{ backgroundColor: "var(--bg-sunken)", borderColor: "var(--rule)" }}
-    >
-      <div className="shell">
-        <Reveal>
-          <h2 className="max-w-[20ch] font-display text-3xl font-semibold leading-tight tracking-tight sm:text-4xl">
-            Booking a trip takes three messages
-          </h2>
-        </Reveal>
-
-        <ol className="mt-12 grid gap-10 md:grid-cols-3 md:gap-8">
-          {steps.map((s, i) => {
-            const Icon = s.icon;
-            return (
-              <Reveal as="li" key={s.title} delay={i * 90}>
-                <div
-                  className="flex h-12 w-12 items-center justify-center rounded-full"
-                  style={{ backgroundColor: "var(--accent-soft)", color: "var(--accent)" }}
-                >
-                  <Icon size={23} weight="duotone" />
+          <div className="mt-16 grid gap-x-10 gap-y-12 sm:grid-cols-2 lg:grid-cols-3">
+            {PROMISES.map(({ icon: Icon, title, body }, i) => (
+              <Reveal key={title} delay={i * 70}>
+                <div>
+                  <span
+                    className="grid h-12 w-12 place-items-center rounded-xl"
+                    style={{
+                      backgroundColor: "rgb(255 255 255 / 0.08)",
+                      border: "1px solid var(--rule-onDeep)",
+                      color: "var(--color-flame-300)",
+                    }}
+                  >
+                    <Icon size={23} weight="duotone" />
+                  </span>
+                  <h3 className="mt-5 font-display text-[1.125rem] font-semibold" style={{ color: "var(--ink-onDeep)" }}>
+                    {title}
+                  </h3>
+                  <p className="mt-2.5 text-[0.9375rem] leading-relaxed" style={{ color: "var(--ink-onDeep-soft)" }}>
+                    {body}
+                  </p>
                 </div>
-                <h3 className="mt-5 font-display text-xl font-semibold">{s.title}</h3>
-                <p
-                  className="mt-2.5 max-w-[42ch] leading-relaxed"
-                  style={{ color: "var(--ink-soft)" }}
-                >
-                  {s.body}
-                </p>
               </Reveal>
-            );
-          })}
-        </ol>
-      </div>
-    </section>
-  );
-}
+            ))}
+          </div>
 
-/* -------------------------------------------------------- Events partner */
-
-function EventsPartner() {
-  return (
-    <section className="shell py-20 md:py-28">
-      <Reveal className="relative overflow-hidden rounded-3xl">
-        <Image
-          src="/images/jodhpur.webp"
-          alt="Mehrangarh Fort above Jodhpur at dusk"
-          width={1110}
-          height={624}
-          sizes="(max-width: 1024px) 100vw, 1200px"
-          className="h-[26rem] w-full object-cover sm:h-[30rem]"
-        />
-        <div
-          className="absolute inset-0"
-          style={{
-            background:
-              "linear-gradient(to top, rgb(1 26 46 / 0.92) 12%, rgb(1 26 46 / 0.55) 48%, rgb(1 26 46 / 0.15) 100%)",
-          }}
-        />
-        <div className="absolute inset-x-0 bottom-0 p-7 sm:p-10">
-          <h2 className="max-w-[20ch] font-display text-2xl font-semibold leading-tight text-white sm:text-3xl">
-            Pool parties, cultural nights and DJ sets, run by our event partner
-          </h2>
-          <p className="mt-3.5 max-w-[56ch] leading-relaxed text-white/80">
-            Every celebration on a 2XBT tour is produced by our official event
-            management partner, with managed venues, decor and on ground
-            coordination.
-          </p>
-          <a
-            href={site.eventsPartner}
-            target="_blank"
-            rel="noreferrer"
-            className="btn btn-onimage mt-7"
+          <div
+            className="mt-20 border-t pt-14"
+            style={{ borderColor: "var(--rule-onDeep)" }}
           >
-            See upcoming events
-            <ArrowRight size={17} weight="bold" />
-          </a>
+            <StatBand />
+          </div>
         </div>
-      </Reveal>
-    </section>
-  );
-}
+        <WaveDivider fill="var(--bg)" accent={false} />
+      </section>
 
-/* ------------------------------------------------------------ Closing CTA */
+      {/* ---- How it works ------------------------------------------- */}
+      <section className="relative overflow-hidden py-20 md:py-28">
+        <div className="shell relative">
+        <SectionHeading
+          eyebrow="How it works"
+          title="Three steps from idea to"
+          accent="departure"
+        />
 
-function ClosingCta() {
-  return (
-    <section
-      className="border-t py-20 md:py-24"
-      style={{ backgroundColor: "var(--bg-sunken)", borderColor: "var(--rule)" }}
-    >
-      <Reveal className="shell text-center">
-        <h2 className="mx-auto max-w-[20ch] font-display text-3xl font-semibold leading-tight tracking-tight sm:text-4xl">
-          Travelling with friends, family or your whole office?
-        </h2>
-        <p
-          className="mx-auto mt-5 max-w-[52ch] text-lg leading-relaxed"
-          style={{ color: "var(--ink-soft)" }}
+        <ol className="relative mt-16 grid gap-10 md:grid-cols-3 md:gap-8">
+          {/* The route only makes sense once the steps sit in a row. The
+              arc is centred on the badges, so it reads as the line the
+              numbers are threaded onto. */}
+          <SketchRoute
+            pins={0}
+            className="pointer-events-none absolute -top-[30px] left-0 hidden h-[120px] w-full select-none opacity-[0.35] md:block"
+            style={{ color: "var(--accent)" }}
+          />
+          {STEPS.map(({ icon: Icon, title, body }, i) => (
+            <Reveal key={title} delay={i * 120} as="li" className="relative">
+              <span
+                className="relative grid h-14 w-14 place-items-center rounded-2xl"
+                style={{
+                  backgroundImage: "linear-gradient(135deg, var(--accent), var(--color-flame-400))",
+                  color: "#fff",
+                  boxShadow: "0 8px 20px rgb(244 112 26 / 0.3)",
+                }}
+              >
+                <Icon size={25} weight="duotone" />
+                <span
+                  className="absolute -right-1.5 -top-1.5 grid h-6 w-6 place-items-center rounded-full font-display text-[0.6875rem] font-bold"
+                  style={{ backgroundColor: "var(--color-navy-800)", color: "#fff" }}
+                >
+                  {i + 1}
+                </span>
+              </span>
+              <h3 className="mt-6 font-display text-[1.25rem] font-semibold">{title}</h3>
+              <p className="mt-3 max-w-[38ch] leading-relaxed" style={{ color: "var(--ink-soft)" }}>
+                {body}
+              </p>
+            </Reveal>
+          ))}
+        </ol>
+        </div>
+      </section>
+
+      {/* ---- Destination spotlight ---------------------------------- */}
+      <section
+        className="paper-grain relative overflow-hidden border-y py-20 md:py-28"
+        style={{ backgroundColor: "var(--bg-sunken)", borderColor: "var(--rule)" }}
+      >
+        <div
+          aria-hidden
+          className="pointer-events-none absolute inset-0 select-none"
+          style={{ color: "var(--cool)" }}
         >
-          Tell us the group size and the dates. We will build the itinerary
-          around them and send a fixed quote.
-        </p>
-        <div className="mt-9 flex flex-wrap justify-center gap-3">
-          <Link href="/contact" className="btn btn-primary">
-            Plan my trip
-            <ArrowRight size={17} weight="bold" />
-          </Link>
-          <a href={site.phoneHref} className="btn btn-ghost">
-            {site.phone}
-          </a>
+          <SketchPalm className="sway-soft sketch-layer -left-2 bottom-0 hidden h-[260px] w-[142px] opacity-[0.15] lg:block" />
+          <SketchShikara className="rock sketch-layer bottom-6 right-[3%] hidden h-[130px] w-[238px] opacity-[0.15] lg:block" />
         </div>
-      </Reveal>
-    </section>
+
+        <div className="shell relative">
+          <SectionHeading
+            align="left"
+            eyebrow="On the road"
+            title="Places our groups"
+            accent="came back from"
+            action={
+              <Link href="/gallery" className="btn btn-ghost">
+                Open the gallery
+                <ArrowUpRight size={16} weight="bold" />
+              </Link>
+            }
+          />
+
+          <div className="mt-14 grid auto-rows-[11rem] grid-cols-2 gap-4 lg:grid-cols-4">
+            {SPOTLIGHT.map((item, i) => (
+              <Reveal
+                key={item.name}
+                delay={i * 70}
+                from="scale"
+                className={`${item.span} h-full`}
+              >
+                <Link
+                  href="/gallery"
+                  className="group relative block h-full overflow-hidden rounded-[18px]"
+                >
+                  <Image
+                    src={item.src}
+                    alt={`${item.name}, ${item.region}`}
+                    fill
+                    sizes="(min-width: 1024px) 24rem, 46vw"
+                    className="object-cover transition-transform duration-[900ms] ease-[var(--ease-out-strong)] group-hover:scale-110"
+                  />
+                  <span
+                    className="absolute inset-0 opacity-80 transition-opacity duration-400 group-hover:opacity-95"
+                    style={{
+                      backgroundImage:
+                        "linear-gradient(to top, rgb(5 22 40 / 0.85), transparent 58%)",
+                    }}
+                  />
+                  <span className="absolute inset-x-4 bottom-4">
+                    <span
+                      className="block text-[0.6875rem] font-semibold uppercase tracking-[0.14em]"
+                      style={{ color: "var(--color-flame-300)" }}
+                    >
+                      {item.region}
+                    </span>
+                    <span className="mt-0.5 block font-display text-[1.0625rem] font-semibold text-white">
+                      {item.name}
+                    </span>
+                  </span>
+                </Link>
+              </Reveal>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* ---- Social proof ------------------------------------------- */}
+      <section className="relative overflow-hidden py-20 md:py-28">
+        <SketchCamera
+          className="pointer-events-none absolute right-[4%] top-12 hidden h-[110px] w-[154px] select-none opacity-[0.14] xl:block"
+          style={{ color: "var(--accent)", transform: "rotate(6deg)" }}
+        />
+        <div className="shell relative">
+        <SectionHeading
+          eyebrow="Travellers"
+          title="Don&rsquo;t take"
+          accent="our word"
+          tail="for it"
+        />
+        <div className="mt-14">
+          <TestimonialWall />
+        </div>
+        </div>
+      </section>
+    </>
   );
 }

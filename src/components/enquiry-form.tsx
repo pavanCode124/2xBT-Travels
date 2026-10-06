@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { useSearchParams } from "next/navigation";
 import { WhatsappLogo, EnvelopeSimple, CheckCircle } from "@phosphor-icons/react";
-import { packages } from "@/data/packages";
+import { packages, categories } from "@/data/packages";
 import { site, whatsappLink } from "@/data/site";
 
 type Errors = Partial<Record<"name" | "phone" | "email" | "message", string>>;
@@ -140,12 +140,19 @@ export function EnquiryForm() {
           <label htmlFor="tour" className="text-[0.875rem] font-medium">
             Which tour
           </label>
+          {/* 52 packages is too long a flat list, so it is grouped by region. */}
           <select id="tour" value={values.tour} onChange={set("tour")} className="field">
             <option value="">Not decided yet</option>
-            {packages.map((p) => (
-              <option key={p.slug} value={p.name}>
-                {p.name}
-              </option>
+            {categories.map((c) => (
+              <optgroup key={c.id} label={c.label}>
+                {packages
+                  .filter((p) => p.category === c.id)
+                  .map((p) => (
+                    <option key={p.slug} value={p.name}>
+                      {p.name}
+                    </option>
+                  ))}
+              </optgroup>
             ))}
             <option value="Custom group trip">Something custom</option>
           </select>
@@ -156,7 +163,7 @@ export function EnquiryForm() {
           label="Group size"
           value={values.people}
           onChange={set("people")}
-          hint="Prices on the site assume 6 people."
+          hint="Prices are per person, by sharing basis."
         />
         <Field
           id="dates"

@@ -1,27 +1,36 @@
 import type { Metadata, Viewport } from "next";
-import { Outfit, Geist } from "next/font/google";
+import { Sora, Plus_Jakarta_Sans, Instrument_Serif } from "next/font/google";
 import "./globals.css";
 import { SiteHeader } from "@/components/site-header";
 import { SiteFooter } from "@/components/site-footer";
-import { WhatsappFab } from "@/components/whatsapp-fab";
+import { FloatingContact } from "@/components/floating-contact";
+import { SketchDefs } from "@/components/sketch-art";
 import { site } from "@/data/site";
 
-const outfit = Outfit({
+const sora = Sora({
   subsets: ["latin"],
-  variable: "--font-outfit",
+  variable: "--font-sora",
   display: "swap",
 });
 
-const geist = Geist({
+const jakarta = Plus_Jakarta_Sans({
   subsets: ["latin"],
-  variable: "--font-geist",
+  variable: "--font-jakarta",
+  display: "swap",
+});
+
+const instrument = Instrument_Serif({
+  subsets: ["latin"],
+  weight: "400",
+  style: "italic",
+  variable: "--font-instrument",
   display: "swap",
 });
 
 export const metadata: Metadata = {
   metadataBase: new URL(site.url),
   title: {
-    default: `${site.name} Tours & Travels | Group tours and treks across India`,
+    default: `${site.name} Tours & Travels | Group tours, yatras and treks across India & Nepal`,
     template: `%s | ${site.name}`,
   },
   description: site.description,
@@ -29,9 +38,12 @@ export const metadata: Metadata = {
     "group tours India",
     "Char Dham Yatra package",
     "Kedarnath tour from Mumbai",
+    "Ladakh bike trip",
+    "Kashmir tour package",
     "Kerala backwaters package",
-    "trek organisers Mumbai",
-    "2XBT travels",
+    "Nepal Annapurna base camp trek",
+    "Andaman islands tour",
+    "2XBT travels Mumbai",
   ],
   openGraph: {
     type: "website",
@@ -40,15 +52,17 @@ export const metadata: Metadata = {
     siteName: site.legalName,
     title: `${site.name} Tours & Travels`,
     description: site.description,
+    images: [{ url: "/images/tours/ladakh-explorer-6d5n.webp", width: 1800, height: 1196 }],
   },
+  twitter: { card: "summary_large_image" },
   robots: { index: true, follow: true },
-  icons: { icon: "/images/logo.png", apple: "/images/logo.png" },
+  icons: { icon: "/images/logo-mark.png", apple: "/images/logo-mark.png" },
 };
 
 export const viewport: Viewport = {
   themeColor: [
-    { media: "(prefers-color-scheme: light)", color: "#fbf8f5" },
-    { media: "(prefers-color-scheme: dark)", color: "#011a2e" },
+    { media: "(prefers-color-scheme: light)", color: "#f7f9fc" },
+    { media: "(prefers-color-scheme: dark)", color: "#030f1d" },
   ],
 };
 
@@ -61,6 +75,7 @@ const orgJsonLd = {
   telephone: site.phone,
   email: site.email,
   slogan: site.tagline,
+  description: site.description,
   address: {
     "@type": "PostalAddress",
     streetAddress: site.address.line1,
@@ -69,6 +84,7 @@ const orgJsonLd = {
     addressRegion: "Maharashtra",
     addressCountry: "IN",
   },
+  areaServed: "India",
   sameAs: [site.socials.instagram, site.socials.facebook],
 };
 
@@ -76,18 +92,23 @@ export default function RootLayout({
   children,
 }: Readonly<{ children: React.ReactNode }>) {
   return (
-    <html lang="en-IN" className={`${outfit.variable} ${geist.variable}`}>
+    <html
+      lang="en-IN"
+      className={`${sora.variable} ${jakarta.variable} ${instrument.variable}`}
+    >
       <body>
         <a
           href="#main"
-          className="sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-[100] focus:rounded-full focus:bg-[var(--accent)] focus:px-5 focus:py-3 focus:text-sm focus:font-semibold focus:text-[var(--accent-ink)]"
+          className="sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-[100] focus:rounded-full focus:bg-[var(--accent)] focus:px-5 focus:py-3 focus:text-sm focus:font-semibold focus:text-white"
         >
           Skip to content
         </a>
+        {/* One copy of the pencil-roughen filter, referenced by every sketch. */}
+        <SketchDefs />
         <SiteHeader />
         <main id="main">{children}</main>
         <SiteFooter />
-        <WhatsappFab />
+        <FloatingContact />
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(orgJsonLd) }}
