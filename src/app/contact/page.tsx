@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { Suspense } from "react";
+import Image from "next/image";
 import {
   MapPin,
   Phone,
@@ -7,7 +8,6 @@ import {
   InstagramLogo,
   FacebookLogo,
   WhatsappLogo,
-  Clock,
   Sparkle,
 } from "@phosphor-icons/react/dist/ssr";
 import { PageHero } from "@/components/page-hero";
@@ -134,19 +134,6 @@ export default function ContactPage() {
             </a>
           </div>
 
-          <div className="surface p-6">
-            <h2 className="flex items-center gap-2 font-display text-[1.0625rem] font-semibold">
-              <Clock size={18} weight="fill" style={{ color: "var(--accent)" }} />
-              When we reply
-            </h2>
-            <ul className="mt-4 grid gap-2.5 text-[0.9375rem]" style={{ color: "var(--ink-soft)" }}>
-              <li>WhatsApp — usually within the hour</li>
-              <li>Phone — 9am to 9pm, every day</li>
-              <li>Email — same working day</li>
-              <li>On-tour emergencies — 24×7</li>
-            </ul>
-          </div>
-
           <div
             className="aurora rounded-2xl border p-6"
             style={{ borderColor: "var(--rule-strong)", backgroundColor: "var(--bg-raised)" }}
@@ -155,9 +142,18 @@ export default function ContactPage() {
               <Sparkle size={18} weight="fill" style={{ color: "var(--cool)" }} />
               Events &amp; celebrations
             </h2>
-            <p className="mt-3 text-[0.9375rem] leading-relaxed" style={{ color: "var(--ink-soft)" }}>
+            <div className="relative mt-4 h-16 w-40">
+              <Image
+                src="/images/events-partner.webp"
+                alt="Vibe & Thrive, our events partner"
+                fill
+                sizes="10rem"
+                className="object-contain object-left"
+              />
+            </div>
+            <p className="mt-4 text-[0.9375rem] leading-relaxed" style={{ color: "var(--ink-soft)" }}>
               Birthdays, anniversaries and brand activations on the road are handled
-              with our events partner.
+              with our events partner, Vibe &amp; Thrive.
             </p>
             <a
               href={site.eventsPartner}
@@ -165,7 +161,7 @@ export default function ContactPage() {
               rel="noreferrer"
               className="btn btn-cool btn-sm mt-5"
             >
-              Vibe &amp; Thrivee
+              Visit Vibe &amp; Thrive
             </a>
           </div>
 

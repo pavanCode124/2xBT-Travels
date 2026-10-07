@@ -44,21 +44,6 @@ const team = [
   },
 ];
 
-const VALUES = [
-  {
-    title: "Plan it properly",
-    body: "Every itinerary is written day by day before a single booking opens, with the hotel basis, the transfers and the trek days named.",
-  },
-  {
-    title: "Say what is not included",
-    body: "Pony charges, union taxis, VIP darshan, lunches. The exclusions are on the page so the price you budget for is the real one.",
-  },
-  {
-    title: "Stay with the group",
-    body: "A 2XBT coordinator travels with every departure. When a road closes or weather turns, someone on our payroll is there to re-plan it.",
-  },
-];
-
 export default function AboutPage() {
   return (
     <>
@@ -163,32 +148,46 @@ export default function AboutPage() {
         <WaveDivider fill="var(--bg)" accent={false} />
       </section>
 
-      {/* ---- Values -------------------------------------------------- */}
+      {/* ---- Partnership ----------------------------------------------- */}
       <section className="shell py-16 md:py-24">
         <SectionHeading
-          eyebrow="How we work"
-          title="Three rules we don&rsquo;t"
-          accent="bend"
+          eyebrow="Our partner"
+          title="Celebrations, handled with"
+          accent="Vibe & Thrive"
         />
-        <div className="mt-14 grid gap-10 md:grid-cols-3">
-          {VALUES.map((v, i) => (
-            <Reveal key={v.title} delay={i * 100}>
-              <span
-                className="grid h-11 w-11 place-items-center rounded-xl font-display text-[1rem] font-bold"
-                style={{
-                  backgroundImage: "linear-gradient(135deg, var(--accent), var(--color-flame-400))",
-                  color: "#fff",
-                }}
-              >
-                {i + 1}
-              </span>
-              <h3 className="mt-5 font-display text-xl font-semibold">{v.title}</h3>
-              <p className="mt-3 max-w-[40ch] leading-relaxed" style={{ color: "var(--ink-soft)" }}>
-                {v.body}
+        <Reveal>
+          <div
+            className="aurora mt-14 grid items-center gap-10 rounded-[22px] border p-8 md:grid-cols-[auto_1fr] md:p-10"
+            style={{ borderColor: "var(--rule-strong)", backgroundColor: "var(--bg-raised)" }}
+          >
+            <div className="relative h-20 w-48 shrink-0 md:h-24 md:w-56">
+              <Image
+                src="/images/events-partner.webp"
+                alt="Vibe & Thrive, 2XBT's events partner"
+                fill
+                sizes="14rem"
+                className="object-contain object-left"
+              />
+            </div>
+            <div>
+              <p className="max-w-[56ch] text-[1.0625rem] leading-relaxed" style={{ color: "var(--ink-soft)" }}>
+                For birthdays, anniversaries, proposals and brand activations on the
+                road, we team up with Vibe &amp; Thrive. They design the moment, we
+                get the group there — same itinerary, same captain, one less thing
+                to plan.
               </p>
-            </Reveal>
-          ))}
-        </div>
+              <a
+                href={site.eventsPartner}
+                target="_blank"
+                rel="noreferrer"
+                className="btn btn-ghost mt-6"
+              >
+                Visit Vibe &amp; Thrive
+                <ArrowRight size={17} weight="bold" />
+              </a>
+            </div>
+          </div>
+        </Reveal>
       </section>
 
       {/* ---- Team ---------------------------------------------------- */}

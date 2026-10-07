@@ -1,6 +1,12 @@
 import type { Metadata, Viewport } from "next";
-import { Sora, Plus_Jakarta_Sans, Instrument_Serif } from "next/font/google";
+import {
+  Sora,
+  Plus_Jakarta_Sans,
+  Instrument_Serif,
+} from "next/font/google";
+
 import "./globals.css";
+
 import { SiteHeader } from "@/components/site-header";
 import { SiteFooter } from "@/components/site-footer";
 import { FloatingContact } from "@/components/floating-contact";
@@ -29,11 +35,14 @@ const instrument = Instrument_Serif({
 
 export const metadata: Metadata = {
   metadataBase: new URL(site.url),
+
   title: {
     default: `${site.name} Tours & Travels | Group tours, yatras and treks across India & Nepal`,
     template: `%s | ${site.name}`,
   },
+
   description: site.description,
+
   keywords: [
     "group tours India",
     "Char Dham Yatra package",
@@ -45,6 +54,7 @@ export const metadata: Metadata = {
     "Andaman islands tour",
     "2XBT travels Mumbai",
   ],
+
   openGraph: {
     type: "website",
     locale: "en_IN",
@@ -52,18 +62,34 @@ export const metadata: Metadata = {
     siteName: site.legalName,
     title: `${site.name} Tours & Travels`,
     description: site.description,
-    images: [{ url: "/images/tours/ladakh-explorer-6d5n.webp", width: 1800, height: 1196 }],
+    images: [
+      {
+        url: "/images/tours/ladakh-explorer-6d5n.webp",
+        width: 1800,
+        height: 1196,
+      },
+    ],
   },
-  twitter: { card: "summary_large_image" },
-  robots: { index: true, follow: true },
-  icons: { icon: "/images/logo-mark.png", apple: "/images/logo-mark.png" },
+
+  twitter: {
+    card: "summary_large_image",
+  },
+
+  robots: {
+    index: true,
+    follow: true,
+  },
+
+  icons: {
+    icon: "/images/logo-mark.png",
+    apple: "/images/logo-mark.png",
+  },
 };
 
+// Always use light browser UI/theme color
 export const viewport: Viewport = {
-  themeColor: [
-    { media: "(prefers-color-scheme: light)", color: "#f7f9fc" },
-    { media: "(prefers-color-scheme: dark)", color: "#030f1d" },
-  ],
+  themeColor: "#f7f9fc",
+  colorScheme: "light",
 };
 
 const orgJsonLd = {
@@ -76,6 +102,7 @@ const orgJsonLd = {
   email: site.email,
   slogan: site.tagline,
   description: site.description,
+
   address: {
     "@type": "PostalAddress",
     streetAddress: site.address.line1,
@@ -84,18 +111,34 @@ const orgJsonLd = {
     addressRegion: "Maharashtra",
     addressCountry: "IN",
   },
+
   areaServed: "India",
-  sameAs: [site.socials.instagram, site.socials.facebook],
+
+  sameAs: [
+    site.socials.instagram,
+    site.socials.facebook,
+  ],
 };
 
 export default function RootLayout({
   children,
-}: Readonly<{ children: React.ReactNode }>) {
+}: Readonly<{
+  children: React.ReactNode;
+}>) {
   return (
     <html
       lang="en-IN"
-      className={`${sora.variable} ${jakarta.variable} ${instrument.variable}`}
+      className={`light ${sora.variable} ${jakarta.variable} ${instrument.variable}`}
+      style={{
+        colorScheme: "light",
+      }}
+      suppressHydrationWarning
     >
+      <head>
+        {/* Explicitly tell the browser that this website is light-only */}
+        <meta name="color-scheme" content="light" />
+      </head>
+
       <body>
         <a
           href="#main"
@@ -103,15 +146,25 @@ export default function RootLayout({
         >
           Skip to content
         </a>
-        {/* One copy of the pencil-roughen filter, referenced by every sketch. */}
+
+        {/* One copy of the pencil-roughen filter, referenced by every sketch */}
         <SketchDefs />
+
         <SiteHeader />
-        <main id="main">{children}</main>
+
+        <main id="main">
+          {children}
+        </main>
+
         <SiteFooter />
+
         <FloatingContact />
+
         <script
           type="application/ld+json"
-          dangerouslySetInnerHTML={{ __html: JSON.stringify(orgJsonLd) }}
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify(orgJsonLd),
+          }}
         />
       </body>
     </html>

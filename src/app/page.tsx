@@ -19,12 +19,10 @@ import { DestinationMarquee } from "@/components/destination-marquee";
 import { SectionHeading } from "@/components/section-heading";
 import { PackageCard } from "@/components/package-card";
 import { StatBand } from "@/components/stat-band";
-import { TestimonialWall } from "@/components/testimonial-wall";
 import { WaveDivider } from "@/components/wave";
 import {
   FlightPath,
   SketchBalloon,
-  SketchCamera,
   SketchCompass,
   SketchPalm,
   SketchRoute,
@@ -98,13 +96,10 @@ const SPOTLIGHT = [
   { src: "/images/places/gulmarg.webp", name: "Gulmarg", region: "Kashmir", span: "" },
   { src: "/images/places/kovalam.webp", name: "Kovalam", region: "Kerala", span: "" },
   { src: "/images/places/havelock.webp", name: "Havelock", region: "Andaman", span: "" },
-  { src: "/images/places/kedarnath.webp", name: "Kedarnath", region: "Uttarakhand", span: "" },
-  { src: "/images/places/pokhara.webp", name: "Pokhara", region: "Nepal", span: "lg:col-span-2" },
+  { src: "/images/places/pokhara.webp", name: "Pokhara", region: "Nepal", span: "" },
 ];
 
 export default function HomePage() {
-  // Best-value picks: the biggest markdowns, one per region so the row is
-  // not six versions of the same trip.
   const seen = new Set<string>();
   const featured = packages
     .slice()
@@ -130,8 +125,6 @@ export default function HomePage() {
 
       {/* ---- Regions ------------------------------------------------ */}
       <section className="paper-grain relative overflow-hidden py-20 md:py-28">
-        {/* A compass turning behind the heading and a suitcase parked in
-            the far corner — the margin doodles of a trip notebook. */}
         <div
           aria-hidden
           className="pointer-events-none absolute inset-0 select-none"
@@ -273,8 +266,6 @@ export default function HomePage() {
       <section className="relative overflow-hidden" style={{ backgroundColor: "var(--color-navy-900)" }}>
         <div className="grid-veil absolute inset-0" />
 
-        {/* Chalk on the navy: a shikhara, a balloon drifting up the right
-            edge, and a route arc crossing above the heading. */}
         <div aria-hidden className="pointer-events-none absolute inset-0 select-none text-white">
           <SketchTemple className="sketch-layer -left-4 bottom-0 hidden h-[260px] w-[234px] opacity-[0.07] lg:block" />
           <SketchBalloon className="bob sketch-layer right-[5%] top-[12%] hidden h-[190px] w-[127px] opacity-[0.09] md:block" />
@@ -329,7 +320,7 @@ export default function HomePage() {
       </section>
 
       {/* ---- How it works ------------------------------------------- */}
-      <section className="relative overflow-hidden py-20 md:py-28">
+      {/* <section className="relative overflow-hidden py-20 md:py-28">
         <div className="shell relative">
         <SectionHeading
           eyebrow="How it works"
@@ -338,9 +329,6 @@ export default function HomePage() {
         />
 
         <ol className="relative mt-16 grid gap-10 md:grid-cols-3 md:gap-8">
-          {/* The route only makes sense once the steps sit in a row. The
-              arc is centred on the badges, so it reads as the line the
-              numbers are threaded onto. */}
           <SketchRoute
             pins={0}
             className="pointer-events-none absolute -top-[30px] left-0 hidden h-[120px] w-full select-none opacity-[0.35] md:block"
@@ -372,7 +360,7 @@ export default function HomePage() {
           ))}
         </ol>
         </div>
-      </section>
+      </section> */}
 
       {/* ---- Destination spotlight ---------------------------------- */}
       <section
@@ -443,25 +431,6 @@ export default function HomePage() {
               </Reveal>
             ))}
           </div>
-        </div>
-      </section>
-
-      {/* ---- Social proof ------------------------------------------- */}
-      <section className="relative overflow-hidden py-20 md:py-28">
-        <SketchCamera
-          className="pointer-events-none absolute right-[4%] top-12 hidden h-[110px] w-[154px] select-none opacity-[0.14] xl:block"
-          style={{ color: "var(--accent)", transform: "rotate(6deg)" }}
-        />
-        <div className="shell relative">
-        <SectionHeading
-          eyebrow="Travellers"
-          title="Don&rsquo;t take"
-          accent="our word"
-          tail="for it"
-        />
-        <div className="mt-14">
-          <TestimonialWall />
-        </div>
         </div>
       </section>
     </>

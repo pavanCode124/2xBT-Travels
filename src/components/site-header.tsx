@@ -36,8 +36,11 @@ export function SiteHeader() {
 
   useEffect(() => {
     const onScroll = () => setLifted(window.scrollY > 12);
+
     onScroll();
+
     window.addEventListener("scroll", onScroll, { passive: true });
+
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
 
@@ -48,21 +51,31 @@ export function SiteHeader() {
 
   useEffect(() => {
     document.body.style.overflow = open ? "hidden" : "";
+
     return () => {
       document.body.style.overflow = "";
     };
   }, [open]);
 
-  // The mega-menu opens on hover but must also close on an outside click
-  // and on Escape, so keyboard and touch users are not trapped in it.
+  // Close mega-menu when clicking outside or pressing Escape
   useEffect(() => {
     if (!mega) return;
+
     const onDown = (e: MouseEvent) => {
-      if (!megaWrap.current?.contains(e.target as Node)) setMega(false);
+      if (!megaWrap.current?.contains(e.target as Node)) {
+        setMega(false);
+      }
     };
-    const onKey = (e: KeyboardEvent) => e.key === "Escape" && setMega(false);
+
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === "Escape") {
+        setMega(false);
+      }
+    };
+
     document.addEventListener("mousedown", onDown);
     document.addEventListener("keydown", onKey);
+
     return () => {
       document.removeEventListener("mousedown", onDown);
       document.removeEventListener("keydown", onKey);
@@ -72,58 +85,74 @@ export function SiteHeader() {
   const isActive = (href: string) =>
     href === "/" ? pathname === "/" : pathname.startsWith(href);
 
-  const countOf = (id: string) => packages.filter((p) => p.category === id).length;
+  const countOf = (id: string) =>
+    packages.filter((p) => p.category === id).length;
 
   return (
     <>
-      {/* Contact strip. Hidden on small screens, where the floating
-          buttons already cover calling and WhatsApp. */}
+      {/* Contact strip */}
       <div
         className="hidden lg:block"
-        style={{ backgroundColor: "var(--color-navy-900)", color: "var(--ink-onDeep-soft)" }}
+        style={{
+          backgroundColor: "#87CEEB",
+          color: "#123047",
+        }}
       >
         <div className="shell flex h-10 items-center justify-between text-[0.8125rem]">
           <p className="flex items-center gap-2">
             <span
               className="inline-block h-1.5 w-1.5 rounded-full"
-              style={{ backgroundColor: "var(--color-flame-400)" }}
+              style={{ backgroundColor: "#ff6b35" }}
             />
-            Group tours · Yatras · Treks · Bike rides — departures from Mumbai, Delhi &amp; Haridwar
+
+            Group tours · Yatras · Treks · Bike rides — departures from Mumbai,
+            Delhi &amp; Haridwar
           </p>
+
           <div className="flex items-center gap-5">
-            <a href={site.phoneHref} className="flex items-center gap-1.5 hover:text-white">
+            <a
+              href={site.phoneHref}
+              className="flex items-center gap-1.5 hover:opacity-70"
+            >
               <Phone size={14} weight="fill" />
               {site.phone}
             </a>
-            <a href={site.emailHref} className="flex items-center gap-1.5 hover:text-white">
+
+            <a
+              href={site.emailHref}
+              className="flex items-center gap-1.5 hover:opacity-70"
+            >
               <EnvelopeSimple size={14} weight="fill" />
               {site.email}
             </a>
+
             <span className="flex items-center gap-3">
               <a
                 href={site.socials.instagram}
                 target="_blank"
                 rel="noreferrer"
                 aria-label="2XBT on Instagram"
-                className="hover:text-white"
+                className="hover:opacity-70"
               >
                 <InstagramLogo size={16} weight="fill" />
               </a>
+
               <a
                 href={site.socials.facebook}
                 target="_blank"
                 rel="noreferrer"
                 aria-label="2XBT on Facebook"
-                className="hover:text-white"
+                className="hover:opacity-70"
               >
                 <FacebookLogo size={16} weight="fill" />
               </a>
+
               <a
                 href={site.socials.whatsapp}
                 target="_blank"
                 rel="noreferrer"
                 aria-label="2XBT on WhatsApp"
-                className="hover:text-white"
+                className="hover:opacity-70"
               >
                 <WhatsappLogo size={16} weight="fill" />
               </a>
@@ -139,11 +168,14 @@ export function SiteHeader() {
             ? "color-mix(in oklab, var(--bg) 86%, transparent)"
             : "var(--bg)",
           backdropFilter: lifted ? "blur(16px) saturate(1.6)" : undefined,
-          borderBottom: `1px solid ${lifted ? "var(--rule)" : "transparent"}`,
+          borderBottom: `1px solid ${
+            lifted ? "var(--rule)" : "transparent"
+          }`,
           boxShadow: lifted ? "var(--shadow-sm)" : "none",
         }}
       >
         <div className="shell flex h-[4.5rem] items-center justify-between gap-6 lg:h-20">
+          {/* Logo */}
           <Link
             href="/"
             className="flex shrink-0 items-center gap-2.5"
@@ -157,9 +189,11 @@ export function SiteHeader() {
               priority
               className="brand-plate h-12 w-auto sm:h-14"
             />
+
             <span className="sr-only">{site.legalName}</span>
           </Link>
 
+          {/* Desktop Navigation */}
           <nav aria-label="Primary" className="hidden lg:block">
             <ul className="flex items-center gap-0.5">
               {nav.map((item) => {
@@ -172,15 +206,22 @@ export function SiteHeader() {
                         href={item.href}
                         aria-current={active ? "page" : undefined}
                         className="relative block rounded-full px-3.5 py-2 text-[0.9375rem] font-medium transition-colors duration-200"
-                        style={{ color: active ? "var(--ink)" : "var(--ink-soft)" }}
+                        style={{
+                          color: active
+                            ? "var(--ink)"
+                            : "var(--ink-soft)",
+                        }}
                       >
                         {item.label}
+
                         <span
                           className="absolute inset-x-3.5 bottom-0 h-[2px] rounded-full transition-transform duration-300 origin-left"
                           style={{
                             backgroundImage:
                               "linear-gradient(90deg, var(--accent), var(--cool))",
-                            transform: active ? "scaleX(1)" : "scaleX(0)",
+                            transform: active
+                              ? "scaleX(1)"
+                              : "scaleX(0)",
                           }}
                         />
                       </Link>
@@ -203,30 +244,44 @@ export function SiteHeader() {
                       onClick={() => setMega(false)}
                       onFocus={() => setMega(true)}
                       className="relative flex items-center gap-1.5 rounded-full px-3.5 py-2 text-[0.9375rem] font-medium transition-colors duration-200"
-                      style={{ color: active || mega ? "var(--ink)" : "var(--ink-soft)" }}
+                      style={{
+                        color:
+                          active || mega
+                            ? "var(--ink)"
+                            : "var(--ink-soft)",
+                      }}
                     >
                       {item.label}
+
                       <CaretDown
                         size={13}
                         weight="bold"
                         className="transition-transform duration-300"
-                        style={{ transform: mega ? "rotate(180deg)" : undefined }}
+                        style={{
+                          transform: mega
+                            ? "rotate(180deg)"
+                            : undefined,
+                        }}
                       />
+
                       <span
                         className="absolute inset-x-3.5 bottom-0 h-[2px] rounded-full transition-transform duration-300 origin-left"
                         style={{
                           backgroundImage:
                             "linear-gradient(90deg, var(--accent), var(--cool))",
-                          transform: active ? "scaleX(1)" : "scaleX(0)",
+                          transform: active
+                            ? "scaleX(1)"
+                            : "scaleX(0)",
                         }}
                       />
                     </Link>
 
+                    {/* Mega Menu */}
                     <div
-                      className="absolute left-1/2 top-full w-[46rem] -translate-x-1/2 pt-3"
+                      className="absolute left-0 top-full w-[46rem] max-w-[calc(100vw-2rem)] pt-3"
                       style={{
                         opacity: mega ? 1 : 0,
-                        transform: `translate(-50%, ${mega ? "0" : "-8px"})`,
+                        transform: `translateY(${mega ? "0" : "-8px"})`,
                         pointerEvents: mega ? "auto" : "none",
                         transition:
                           "opacity 240ms var(--ease-out-strong), transform 240ms var(--ease-out-strong)",
@@ -252,22 +307,28 @@ export function SiteHeader() {
                                     className="object-cover transition-transform duration-500 group-hover:scale-110"
                                   />
                                 </span>
+
                                 <span className="min-w-0">
                                   <span className="flex items-center gap-2 font-display text-[0.9375rem] font-semibold">
                                     {c.label}
+
                                     <span
                                       className="rounded-full px-1.5 py-0.5 text-[0.625rem] font-bold"
                                       style={{
-                                        backgroundColor: "var(--accent-soft)",
+                                        backgroundColor:
+                                          "var(--accent-soft)",
                                         color: "var(--accent)",
                                       }}
                                     >
                                       {countOf(c.id)}
                                     </span>
                                   </span>
+
                                   <span
                                     className="mt-1 block text-[0.8125rem] leading-snug"
-                                    style={{ color: "var(--ink-faint)" }}
+                                    style={{
+                                      color: "var(--ink-faint)",
+                                    }}
                                   >
                                     {c.blurb}
                                   </span>
@@ -275,12 +336,14 @@ export function SiteHeader() {
                               </Link>
                             </li>
                           ))}
+
                           <li>
                             <Link
                               href="/packages"
                               className="flex h-full items-center justify-between gap-3 rounded-2xl p-4 transition-colors duration-200"
                               style={{
-                                backgroundColor: "var(--color-navy-900)",
+                                backgroundColor:
+                                  "var(--color-navy-900)",
                                 color: "var(--ink-onDeep)",
                               }}
                             >
@@ -288,14 +351,22 @@ export function SiteHeader() {
                                 <span className="block font-display text-[0.9375rem] font-semibold">
                                   All {packages.length} packages
                                 </span>
+
                                 <span
                                   className="mt-1 block text-[0.8125rem]"
-                                  style={{ color: "var(--ink-onDeep-soft)" }}
+                                  style={{
+                                    color:
+                                      "var(--ink-onDeep-soft)",
+                                  }}
                                 >
                                   Filter by region, length and budget
                                 </span>
                               </span>
-                              <ArrowRight size={18} weight="bold" />
+
+                              <ArrowRight
+                                size={18}
+                                weight="bold"
+                              />
                             </Link>
                           </li>
                         </ul>
@@ -307,16 +378,20 @@ export function SiteHeader() {
             </ul>
           </nav>
 
+          {/* Desktop Actions */}
           <div className="hidden items-center gap-2.5 lg:flex">
             <ThemeToggle />
+
             <Link href="/contact" className="btn btn-primary btn-sm">
               Plan my trip
               <ArrowRight size={15} weight="bold" />
             </Link>
           </div>
 
+          {/* Mobile Actions */}
           <div className="flex items-center gap-2 lg:hidden">
             <ThemeToggle />
+
             <button
               type="button"
               onClick={() => setOpen((v) => !v)}
@@ -324,13 +399,21 @@ export function SiteHeader() {
               aria-controls="mobile-nav"
               aria-label={open ? "Close menu" : "Open menu"}
               className="grid h-10 w-10 place-items-center rounded-full border"
-              style={{ borderColor: "var(--rule-strong)", color: "var(--ink)" }}
+              style={{
+                borderColor: "var(--rule-strong)",
+                color: "var(--ink)",
+              }}
             >
-              {open ? <X size={19} weight="bold" /> : <List size={19} weight="bold" />}
+              {open ? (
+                <X size={19} weight="bold" />
+              ) : (
+                <List size={19} weight="bold" />
+              )}
             </button>
           </div>
         </div>
 
+        {/* Mobile Navigation */}
         {open ? (
           <div
             id="mobile-nav"
@@ -349,19 +432,28 @@ export function SiteHeader() {
                       key={item.href}
                       style={{
                         opacity: 0,
-                        animation: `revealUp 420ms var(--ease-out-strong) ${i * 45}ms forwards`,
+                        animation: `revealUp 420ms var(--ease-out-strong) ${
+                          i * 45
+                        }ms forwards`,
                       }}
                     >
                       <Link
                         href={item.href}
                         className="flex items-center justify-between border-b py-4 font-display text-[1.6rem] font-semibold"
                         style={{
-                          color: isActive(item.href) ? "var(--accent)" : "var(--ink)",
+                          color: isActive(item.href)
+                            ? "var(--accent)"
+                            : "var(--ink)",
                           borderColor: "var(--rule)",
                         }}
                       >
                         {item.label}
-                        <ArrowRight size={18} weight="bold" style={{ opacity: 0.4 }} />
+
+                        <ArrowRight
+                          size={18}
+                          weight="bold"
+                          style={{ opacity: 0.4 }}
+                        />
                       </Link>
                     </li>
                   ))}
@@ -369,7 +461,11 @@ export function SiteHeader() {
 
                 <div className="mt-7 flex flex-wrap gap-2">
                   {categories.map((c) => (
-                    <Link key={c.id} href={`/packages?category=${c.id}`} className="chip">
+                    <Link
+                      key={c.id}
+                      href={`/packages?category=${c.id}`}
+                      className="chip"
+                    >
                       {c.label}
                     </Link>
                   ))}
@@ -381,7 +477,11 @@ export function SiteHeader() {
                   <Phone size={17} weight="fill" />
                   {site.phone}
                 </a>
-                <Link href="/contact" className="btn btn-primary w-full">
+
+                <Link
+                  href="/contact"
+                  className="btn btn-primary w-full"
+                >
                   Plan my trip
                   <ArrowRight size={16} weight="bold" />
                 </Link>
@@ -393,11 +493,27 @@ export function SiteHeader() {
 
       <style>{`
         @keyframes revealUp {
-          from { opacity: 0; transform: translate3d(0, 14px, 0); }
-          to   { opacity: 1; transform: none; }
+          from {
+            opacity: 0;
+            transform: translate3d(0, 14px, 0);
+          }
+
+          to {
+            opacity: 1;
+            transform: none;
+          }
         }
+
         @media (prefers-reduced-motion: reduce) {
-          @keyframes revealUp { from { opacity: 1; } to { opacity: 1; } }
+          @keyframes revealUp {
+            from {
+              opacity: 1;
+            }
+
+            to {
+              opacity: 1;
+            }
+          }
         }
       `}</style>
     </>
